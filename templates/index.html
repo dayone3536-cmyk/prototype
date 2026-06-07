@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Arena</title>
+</head>
+<body>
+
+    <div id="landing-screen" class="container">
+        <div class="heading">
+            <h1>Two Minds Enter.<br>One Walks Out.</h1>
+        </div>
+
+        <div class="definition">
+            The world's first live, 1-on-1 debate arena. <br>
+            Argue your point. The crowd votes the winner.
+        </div>
+
+        <button class="cta-button" onclick="showSignIn()">Challenge Someone Now</button>
+    </div>
+
+    <div id="overlay" class="overlay hidden">
+        <div class="sign-in-card">
+            <h2>The Arena is Exclusive.</h2>
+
+            <p class = "email_def" >We are letting a select few in this week. Drop your email to claim your invite code.</p>
+            
+            <form onsubmit="handleSubmit(event)">
+                <input type="email" id="user-email" placeholder="Enter your email address" required class="form-input">
+                <button type="submit" class="submit-button">Get Early Access</button>
+            </form>
+            
+            <button class="close-btn" onclick="hideSignIn()">← Back</button>
+        </div>
+    </div>
+
+    <script>
+        function showSignIn() {
+            document.getElementById('overlay').classList.remove('hidden');
+            document.getElementById('overlay').classList.add('visible');
+            document.getElementById('landing-screen').style.opacity = '0.2';
+        }
+
+        function hideSignIn() {
+            document.getElementById('overlay').classList.remove('visible');
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('landing-screen').style.opacity = '1';
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const emailInput = document.getElementById('user-email').value;
+
+            // Push the email data directly to our Flask backend route
+            fetch('/submit-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: emailInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+
+                    alert(" The product is close to the finish line and we will let you know ");
+                    hideSignIn();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
